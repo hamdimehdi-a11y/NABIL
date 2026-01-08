@@ -1,0 +1,155 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nabil Clock Widget</title>
+<style>
+body {
+/* Utilisation de ton image locale */
+background-image: url('IMG_1248.JPG');
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+margin: 0;
+padding: 20px;
+font-family: 'Segoe UI', sans-serif;
+min-height: 100vh;
+}
+
+.container {
+background: rgba(255, 255, 255, 0.85);
+backdrop-filter: blur(8px);
+padding: 15px;
+border-radius: 20px;
+display: inline-flex;
+align-items: center;
+gap: 15px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+max-width: 95%;
+}
+
+.text-section {
+text-align: left;
+}
+
+#name-display {
+font-size: 1.2rem;
+font-weight: bold;
+color: #e74c3c;
+margin-bottom: 5px;
+text-transform: uppercase;
+}
+
+#time {
+font-size: clamp(1.5rem, 8vw, 2.5rem);
+font-weight: bold;
+color: #2c3e50;
+margin: 0;
+}
+
+#date {
+font-size: clamp(0.8rem, 4vw, 1rem);
+color: #7f8c8d;
+}
+
+.analog-clock {
+width: clamp(60px, 20vw, 90px);
+height: clamp(60px, 20vw, 90px);
+border-radius: 50%;
+position: relative;
+background: white;
+border: 2px solid #eee;
+flex-shrink: 0;
+}
+
+.number {
+position: absolute;
+width: 100%;
+height: 100%;
+text-align: center;
+font-size: 0.5rem;
+font-weight: bold;
+transform: rotate(var(--rotation));
+}
+
+.number span {
+display: inline-block;
+transform: rotate(calc(var(--rotation) * -1));
+}
+
+.hand {
+position: absolute;
+bottom: 50%;
+left: 50%;
+transform-origin: bottom;
+border-radius: 5px;
+transform: translateX(-50%);
+}
+
+.hour-hand { width: 3px; height: 25%; background: #333; z-index: 3; }
+.minute-hand { width: 2px; height: 35%; background: #666; z-index: 2; }
+.second-hand { width: 1px; height: 40%; background: #e74c3c; z-index: 1; }
+
+.center-dot {
+position: absolute;
+top: 50%; left: 50%;
+width: 6px; height: 6px;
+background: #333;
+border-radius: 50%;
+transform: translate(-50%, -50%);
+z-index: 10;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="analog-clock" id="clock"></div>
+
+<div class="text-section">
+<div id="name-display">Nabil nul</div>
+<div id="time">00:00:00</div>
+<div id="date">Loading...</div>
+</div>
+</div>
+
+<script>
+const clock = document.getElementById('clock');
+for (let i = 1; i <= 12; i++) {
+const num = document.createElement('div');
+num.className = 'number';
+num.style.setProperty('--rotation', `${i * 30}deg`);
+num.innerHTML = `<span>${i}</span>`;
+clock.appendChild(num);
+}
+
+clock.innerHTML += `
+<div class="center-dot"></div>
+<div class="hand hour-hand" id="hour-hand"></div>
+<div class="hand minute-hand" id="min-hand"></div>
+<div class="hand second-hand" id="sec-hand"></div>
+`;
+
+function update() {
+const now = new Date();
+document.getElementById('time').textContent = now.toLocaleTimeString('fr-FR', { hour12: false });
+const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+
+const s = now.getSeconds();
+const m = now.getMinutes();
+const h = now.getHours();
+
+document.getElementById('sec-hand').style.transform = `translateX(-50%) rotate(${(s / 60) * 360}deg)`;
+document.getElementById('min-hand').style.transform = `translateX(-50%) rotate(${(m / 60) * 360}deg)`;
+document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${(h / 12) * 360 + (m / 60) * 30}deg)`;
+}
+setInterval(update, 1000);
+update();
+</script>
+</body>
+</html>
+
